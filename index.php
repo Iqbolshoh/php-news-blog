@@ -64,7 +64,6 @@ $news = $db->select('news', '*');
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-center flex-grow-1">📰 Latest News</h2>
-            <a href="add.php" class="btn btn-success btn-sm ms-3"><i class="bi bi-plus-lg"></i> Add News</a>
         </div>
 
         <div class="row">
