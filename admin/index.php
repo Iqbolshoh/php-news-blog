@@ -12,7 +12,6 @@ $db = new Database();
 $news = $db->select('news', '*');
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,7 +31,7 @@ $news = $db->select('news', '*');
         </div>
         <div class="row">
             <?php foreach ($news as $new): ?>
-                <div class="col-md-6 mb-4">
+                <div class="col-md-6 mb-4" id="card-<?= $new['id'] ?>">
                     <div class="card h-100 shadow-sm border-0">
                         <div class="card-body">
                             <h5 class="card-title"><?= htmlspecialchars($new['title']) ?></h5>
@@ -43,8 +42,9 @@ $news = $db->select('news', '*');
                             <div>
                                 <a href="edit.php?id=<?= $new['id'] ?>" class="btn btn-sm btn-warning me-1">✏️
                                     Tahrirlash</a>
-                                <a href="delete.php?id=<?= $new['id'] ?>" class="btn btn-sm btn-danger"
-                                    onclick="return confirm('Aniq o‘chirilsinmi?')">🗑️ O‘chirish</a>
+                                <a href="#" class="btn btn-sm btn-danger delete-btn" id="delete-<?= $new['id'] ?>">🗑️
+                                    O‘chirish
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -54,6 +54,58 @@ $news = $db->select('news', '*');
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const deleteId = this.id; // masalan: "delete-12"
+                const id = deleteId.replace('delete-', ''); // faqat son qismi
+
+                const card = document.getElementById('card-' + id); // id orqali card topiladi
+
+                Swal.fire({
+                    title: 'Ishonchingiz komilmi?',
+                    text: "Bu yangilik butunlay o‘chiriladi!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ha, o‘chirish!',
+                    cancelButtonText: 'Bekor qilish'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('delete.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: 'id=' + encodeURIComponent(id)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                Swal.fire({
+                                    icon: data.success ? 'success' : 'error',
+                                    title: data.title,
+                                    text: data.message
+                                });
+
+                                if (data.success && card) {
+                                    card.remove(); // DOM'dan o‘chirish
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Xatolik:', error);
+                                Swal.fire('Xatolik', 'Server bilan muammo yuz berdi.', 'error');
+                            });
+                    }
+                });
+            });
+        });
+    </script>
+
 </body>
 
 </html>
