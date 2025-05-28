@@ -1,19 +1,19 @@
 /* 
  * ======================================================
- *                    DATABASE YARATISH              
+ *                    DATABASE CREATION                  
  * ======================================================
  */
 
--- 1. Avvalgi versiyani tozalash (agar mavjud bo'lsa)
+-- 1. Drop the existing version (if it exists)
 DROP DATABASE IF EXISTS news_db;
 
--- 2. Yangi database yaratish
+-- 2. Create a new database
 CREATE DATABASE news_db;
 
--- 3. Database aktivlashtirish
+-- 3. Use the newly created database
 USE news_db;
 
--- ==================== Users ====================
+-- ==================== Users Table ====================
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -24,19 +24,30 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- ==================== News ====================
+-- ==================== News Table ====================
 CREATE TABLE news (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,         -- Yangilik sarlavhasi
-    content TEXT NOT NULL,               -- Yangilik matni
-    user_id INT,                         -- Muallif (foreign key)
+    title VARCHAR(255) NOT NULL,        -- News title
+    content TEXT NOT NULL,              -- News content
+    user_id INT,                        -- Author (foreign key)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- ==================== Insert Admin User ====================
 INSERT INTO users (name, username, password, role)
-VALUES ('Iqbolshoh Ilhomjonov', 'iqbolshoh', '$2y$10$gIKUrsLRB.U7ee9Fv9nib.di2NgMYvAeqqWGoB5aFXpHoxIv/igkW', 'admin');
+VALUES (
+    'Iqbolshoh Ilhomjonov', 
+    'iqbolshoh', 
+    '$2y$10$gIKUrsLRB.U7ee9Fv9nib.di2NgMYvAeqqWGoB5aFXpHoxIv/igkW', -- Hashed password
+    'admin'
+);
 
+-- ==================== Insert Initial News ====================
 INSERT INTO news (title, content, user_id)
-VALUES ('Laravel 11 chiqdi!','Laravel 11 versiyasi endi yanada engil va kuchli! Yangi xususiyatlar sizni hayratda qoldiradi.',1);
+VALUES (
+    'Laravel 11 Released!',
+    'Laravel 11 is now lighter and more powerful! The new features will blow your mind. 🔥',
+    1
+);
