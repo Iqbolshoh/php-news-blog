@@ -13,7 +13,7 @@ $news_id = $_GET['id'] ?? 0;
 $news = $db->select('news', '*', 'id = ?', [$news_id], 'i')[0] ?? null;
 
 if (!$news) {
-    echo "Yangilik topilmadi!";
+    echo "News not found!";
     exit;
 }
 
@@ -35,59 +35,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($updated) {
             echo json_encode([
                 'success' => true,
-                'title' => 'Yangilandi ✅',
-                'message' => 'Yangilik muvaffaqiyatli yangilandi!'
+                'title' => 'Updated ✅',
+                'message' => 'The news has been successfully updated!'
             ]);
         } else {
             echo json_encode([
                 'success' => false,
-                'title' => 'Xatolik ❌',
-                'message' => 'Yangilashda xatolik yuz berdi.'
+                'title' => 'Error ❌',
+                'message' => 'Failed to update the news.'
             ]);
         }
     } else {
         echo json_encode([
             'success' => false,
-            'title' => 'To‘liq emas 📄',
-            'message' => 'Iltimos, barcha maydonlarni to‘ldiring!'
+            'title' => 'Incomplete Fields 📄',
+            'message' => 'Please fill in all the fields!'
         ]);
     }
     exit;
 }
 ?>
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yangilikni tahrirlash</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Edit News</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-light">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="./">Admin Panel</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="./">🏠 Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../logout/">🚪 Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Edit Form -->
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm border-0">
                     <div class="card-body">
-                        <h3 class="card-title mb-4 text-center">Yangilikni tahrirlash</h3>
+                        <h3 class="text-center mb-4">✏️ Edit News</h3>
 
                         <form id="editForm">
                             <div class="mb-3">
-                                <label for="title" class="form-label">Sarlavha</label>
+                                <label for="title" class="form-label">Title</label>
                                 <input type="text" class="form-control" id="title" name="title"
                                     value="<?= htmlspecialchars($news['title']) ?>" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="content" class="form-label">Kontent</label>
+                                <label for="content" class="form-label">Content</label>
                                 <textarea class="form-control" id="content" name="content" rows="5"
                                     required><?= htmlspecialchars($news['content']) ?></textarea>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100">Saqlash</button>
+                            <button type="submit" class="btn btn-success w-100">💾 Save Changes</button>
                         </form>
                     </div>
                 </div>
@@ -95,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+    <!-- Scripts -->
     <script>
         document.getElementById('editForm').addEventListener('submit', function (e) {
             e.preventDefault();
@@ -116,20 +135,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         text: result.message
                     }).then(() => {
                         if (result.success) {
-                            window.location.href = './'; // orqaga qaytish
+                            window.location.href = './';
                         }
                     });
                 })
                 .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Xatolik!',
-                        text: 'Serverga ulanishda muammo yuz berdi 😵‍💫'
-                    });
-                    console.error('Fetch xatolik:', error);
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Something went wrong with the server.', 'error');
                 });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

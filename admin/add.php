@@ -26,21 +26,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($id) {
             echo json_encode([
                 'success' => true,
-                'title' => 'Muvaffaqiyat ✅',
-                'message' => 'Yangilik muvaffaqiyatli qo‘shildi!'
+                'title' => 'Success ✅',
+                'message' => 'News added successfully!'
             ]);
         } else {
             echo json_encode([
                 'success' => false,
-                'title' => 'Saqlashda xatolik ❌',
-                'message' => 'Maʼlumotni saqlab boʻlmadi.'
+                'title' => 'Save Error ❌',
+                'message' => 'Failed to save the news.'
             ]);
         }
     } else {
         echo json_encode([
             'success' => false,
-            'title' => 'To‘liq emas 📄',
-            'message' => 'Iltimos, barcha maydonlarni to‘ldiring!'
+            'title' => 'Incomplete Form 📄',
+            'message' => 'Please fill out all required fields.'
         ]);
     }
     exit;
@@ -48,39 +48,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yangilik qo‘shish</title>
+    <title>Add News</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-light">
 
+    <!-- Main Content -->
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h3 class="card-title mb-4 text-center">Yangilik qo‘shish</h3>
+                        <h3 class="card-title mb-4 text-center">Add News</h3>
 
-                        <form id="Form">
+                        <form id="newsForm">
                             <div class="mb-3">
-                                <label for="title" class="form-label">Sarlavha</label>
-                                <input type="text" class="form-control" id="title" name="title" placeholder="Title"
-                                    required>
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="title" name="title"
+                                    placeholder="Enter title..." required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="content" class="form-label">Kontent</label>
+                                <label for="content" class="form-label">Content</label>
                                 <textarea class="form-control" id="content" name="content" rows="5"
-                                    placeholder="content..." required></textarea>
+                                    placeholder="Write your news content..." required></textarea>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100">Yuborish</button>
+                            <button type="submit" class="btn btn-success w-100">Submit</button>
                         </form>
                     </div>
                 </div>
@@ -88,9 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('Form').addEventListener('submit', function (e) {
+        document.getElementById('newsForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
             const formData = new FormData(this);
@@ -110,18 +112,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         text: result.message
                     }).then(() => {
                         if (result.success) {
-                            document.getElementById('Form').reset();
-                            window.location.href = './'; // orqaga qaytish
+                            document.getElementById('newsForm').reset();
+                            window.location.href = './';
                         }
                     });
                 })
                 .catch(error => {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Xatolik!',
-                        text: 'Serverga ulanishda muammo yuz berdi 😵‍💫'
+                        title: 'Connection Error ❌',
+                        text: 'Something went wrong while connecting to the server.'
                     });
-                    console.error('Fetch xatolik:', error);
+                    console.error('Fetch error:', error);
                 });
         });
     </script>

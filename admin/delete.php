@@ -6,6 +6,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION
     exit;
 }
 
+header('Content-Type: application/json');
+
 include '../config.php';
 $db = new Database();
 
@@ -16,20 +18,20 @@ if ($news_id) {
     if ($deleted) {
         echo json_encode([
             'success' => true,
-            'title' => 'O‘chirildi ✅',
-            'message' => 'Yangilik muvaffaqiyatli o‘chirildi.'
+            'title' => 'Deleted ✅',
+            'message' => 'The news item was successfully deleted.'
         ]);
     } else {
         echo json_encode([
             'success' => false,
-            'title' => 'Xatolik ⚠️',
-            'message' => 'Yangilikni o‘chirishda muammo yuz berdi.'
+            'title' => 'Error ⚠️',
+            'message' => 'Failed to delete the news item.'
         ]);
     }
 } else {
     echo json_encode([
         'success' => false,
-        'title' => 'Topilmadi ❌',
-        'message' => 'Yangilik ID topilmadi.'
+        'title' => 'Not Found ❌',
+        'message' => 'News ID was not provided.'
     ]);
 }
